@@ -38,4 +38,3 @@ if st.button("Generate Smart Note"):
         st.success(f"📝 **Summary:** {summary}")
         st.info(f"💡 **Detected Emotion:** {main_emotion}")
         st.write(f"✅ **Suggestion:** {suggestions.get(main_emotion, 'Stay mindful and take care!')}")
-
