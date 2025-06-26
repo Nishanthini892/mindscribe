@@ -1,27 +1,31 @@
 import streamlit as st
-from transformers import pipeline
 import text2emotion as te
+import nltk
+from nltk.tokenize import sent_tokenize
 
-# Use a lightweight summarization model compatible with Streamlit Cloud
-summarizer = pipeline("summarization", model="sshleifer/distilbart-cnn-12-6")
+# Download NLTK resources
+nltk.download('punkt')
 
-# UI Setup
 st.set_page_config(page_title="MindScribe - AI Thought Notepad", page_icon="🧠")
 st.title("🧠 MindScribe – AI Thought-to-Notes")
 st.markdown("Type your thoughts below. MindScribe will summarize them and detect your emotion. 📝🧠")
 
-# Text Input
+def summarize_text(text):
+    sentences = sent_tokenize(text)
+    if len(sentences) <= 2:
+        return text
+    return ' '.join(sentences[:2])  # Simple summary: first 2 sentences
+
 user_input = st.text_area("🗣️ Your Thoughts Here", height=200)
 
-# Button to trigger summarization and emotion detection
 if st.button("🧠 Generate Smart Note"):
     if user_input.strip() == "":
         st.warning("⚠️ Please enter some text to analyze.")
     else:
-        # Summarize the text
-        summary = summarizer(user_input, max_length=60, min_length=25, do_sample=False)[0]['summary_text']
+        # Summarize
+        summary = summarize_text(user_input)
 
-        # Detect emotions
+        # Detect emotion
         emotions = te.get_emotion(user_input)
         main_emotion = max(emotions, key=emotions.get)
 
@@ -38,4 +42,3 @@ if st.button("🧠 Generate Smart Note"):
         st.success(f"📝 **Summary:** {summary}")
         st.info(f"💡 **Detected Emotion:** {main_emotion}")
         st.write(f"✅ **Suggestion:** {suggestions.get(main_emotion, 'Stay mindful and take care!')}")
-
