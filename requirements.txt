@@ -1,3 +1,5 @@
 streamlit
 text2emotion
 nltk
+# Download punkt tokenizer on install
+nltk-downloader==0.0.1
